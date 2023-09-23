@@ -6,8 +6,12 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 var cors = require('cors');
 
+
+
+
 // import routes
 const authRoutes = require('./routes/authroutes');
+const userRoutes = require('./routes/userRoutes');
 
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/error");
@@ -21,6 +25,7 @@ mongoose.connect(process.env.DATABASE, {
 
 //MIDDLEWARE
 app.use(morgan('dev'));
+app.use(express.json());
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({
     limit: "5mb",
@@ -35,6 +40,7 @@ app.use(cors());
 //     res.send("Hello from Node Js");
 // })
 app.use('/api', authRoutes);
+app.use('/api', userRoutes);
 
 // error middleware
 app.use(errorHandler);

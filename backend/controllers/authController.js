@@ -4,12 +4,13 @@ const ErrorResponse = require('../utils/errorResponse');
 
 exports.signup = async (req, res, next) => {
     const { email } = req.body;
+    console.log(req.body);
     const userExist = await User.findOne({ email });
     if (userExist) {
-        return next(new ErrorResponse("E-mail already registred", 400));
+        return next(new ErrorResponse("E-mail already registered", 400));
     }
     try {
-        const user = await User.create(req.body);
+        const user = await User.create(req.body);        
         res.status(201).json({
             success: true,
             user
@@ -65,5 +66,17 @@ exports.logout = (req, res, next) => {
     res.status(200).json({
         success: true,
         message: "logged out"
+    })
+}
+
+
+// user profile
+exports.userProfile = async (req, res, next) => {
+
+    const user = await User.findById(req.user.id).select('-password');
+
+    res.status(200).json({
+        success: true,
+        user
     })
 }
