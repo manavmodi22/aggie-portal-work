@@ -6,12 +6,12 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 var cors = require('cors');
 
-
-
-
 // import routes
 const authRoutes = require('./routes/authroutes');
 const userRoutes = require('./routes/userRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const companyRoutes = require('./routes/companyRoutes');
+const companyEmployeeRoutes = require('./routes/companyEmployeeRoutes');
 
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/error");
@@ -41,6 +41,9 @@ app.use(cors());
 // })
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
+app.use('/api', studentRoutes);
+app.use('/api', companyRoutes);
+app.use('/api', companyEmployeeRoutes);
 
 // error middleware
 app.use(errorHandler);
