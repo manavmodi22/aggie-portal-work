@@ -23,38 +23,31 @@ exports.createEmployee = async (req, res, next) => {
     }
 }
 
-// Get employees of a specific company by company name (fuzzy search and case-insensitive)
+
+
 exports.getEmployeesByCompanyName = async (req, res, next) => {
     try {
-        // Extract the company name from the request parameters
         const companyName = req.params.companyName;
+        const { page = 1, limit = 10 } = req.query;
 
-        // Extract pagination parameters
-        const { page = 1, perPage = 10 } = req.query;
-
-        // Create a regular expression pattern for fuzzy search and make it case-insensitive
         const regexPattern = new RegExp(companyName, 'i');
-
-        // Find companies whose names match the pattern
         const companies = await Company.find({ companyName: regexPattern });
 
         if (!companies || companies.length === 0) {
             return next(new ErrorResponse('No matching companies found', 404));
         }
 
-        // Extract the company IDs of matching companies
         const companyIds = companies.map((company) => company.companyID);
 
-        // Calculate the skip value for pagination
-        const skip = (page - 1) * perPage;
+        const skip = (page - 1) * limit;
 
-        // Find employees of the matching companies with pagination
         const employees = await CompanyEmployee.find({ companyID: { $in: companyIds } })
-            .select('employeeName email phone') // Include the necessary fields
+            .select('employeeName email phone')
             .skip(skip)
-            .limit(parseInt(perPage));
+            .limit(parseInt(limit));
 
-        // Map the result to format phone as "not available" if it's not present
+        const totalEmployees = await CompanyEmployee.find({ companyID: { $in: companyIds } }).countDocuments();
+
         const formattedEmployees = employees.map((employee) => ({
             employeeName: employee.employeeName,
             email: employee.email,
@@ -64,6 +57,9 @@ exports.getEmployeesByCompanyName = async (req, res, next) => {
         res.status(200).json({
             success: true,
             employees: formattedEmployees,
+            currentPage: page,
+            totalPages: Math.ceil(totalEmployees / limit),
+            totalEmployees,
         });
     } catch (error) {
         return next(error);
@@ -103,7 +99,7 @@ exports.updateEmployee = async (req, res, next) => {
 };
 
 
-// Delete employee by ID
+
 // Delete employee by ID
 exports.deleteEmployee = async (req, res, next) => {
   try {

@@ -12,7 +12,7 @@ const { isAuthenticated } = require('../middleware/auth');
 // Student routes
 
 // Create a new student
-router.post('/students', isAuthenticated, createStudent);
+router.post('/student/create', isAuthenticated, createStudent);
 
 // Search for students by skills with pagination
 router.get('/students', isAuthenticated, searchStudentsBySkills);
