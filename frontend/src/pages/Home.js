@@ -1,14 +1,15 @@
 import React from 'react'
 import Navbar from '../component/Navbar'
-import Header from '../component/Header'
+import Search from '../component/Search'
+import Footer from '../component/Footer'
 
 
 const Home = () => {
     return (
         <>
             <Navbar />
-            <Header />
-            <h1>Home page</h1>
+            <Search />
+            <Footer />
         </>
     )
 }

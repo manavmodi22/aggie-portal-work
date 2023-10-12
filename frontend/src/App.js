@@ -1,26 +1,20 @@
-import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './component/login';
 import Home from './pages/Home';
-import NotFound from './pages/NotFound';
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import { theme } from './theme';
+import Profile from './component/Profile';
 
 
 const App = () => {
-
     return (
-        <>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <BrowserRouter>
-                    <Routes>
-                        <Route path='/' element={<Home />} />
-                        <Route path='*' element={<NotFound />} />
-                    </Routes>
-                </BrowserRouter>
-            </ThemeProvider>
-        </>
-    )
-}
+        <Router>
+            <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/profile" element={<Profile />} />
+            </Routes>
+        </Router>
+    );
+};
 
-export default App
+export default App;
