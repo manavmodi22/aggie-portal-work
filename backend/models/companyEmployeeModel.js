@@ -18,7 +18,6 @@ const companyEmployeeSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: [true, 'e-mail is required'],
-        unique: true,
         match: [
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             'Please add a valid email'
@@ -27,7 +26,6 @@ const companyEmployeeSchema = new mongoose.Schema({
     phone: {
         type: String,
         trim: true,
-        unique: true,
     },
     companyID: {
         type: Number,

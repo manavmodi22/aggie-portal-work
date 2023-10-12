@@ -45,36 +45,32 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="static" style={{ backgroundColor: '#500001' }}>
-      <Toolbar>
-        <Typography variant="h6" style={{ fontFamily: 'Crimson Pro' }}>
-          Aggies In Tech
-        </Typography>
-        {token ? 
-        ( 
-        <>
-        <IconButton onClick={handleMenuClick} color="inherit">
-          <AccountCircleIcon style = {
-            {
-              color: 'white',
-              marginRight: '10px',
-
-            }
-          } />
-        </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={handleProfileClick}>View Profile</MenuItem>
-          <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-        </Menu>
-        </> ) 
-        : null}
-      </Toolbar>
+    <AppBar position="fixed" style={{ backgroundColor: '#782424', zIndex: 1000 }}>
+        <Toolbar>
+            <Typography variant="h6" style={{ fontFamily: 'Crimson Pro', flexGrow: 1 }}>
+                Aggies In Tech
+            </Typography>
+            {token ? (
+                <>
+                    <IconButton onClick={handleMenuClick} color="inherit">
+                        <AccountCircleIcon style={{
+                            color: 'white',
+                            marginRight: '10px',
+                        }} />
+                    </IconButton>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                    >
+                        <MenuItem onClick={handleProfileClick}>View Profile</MenuItem>
+                        <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+                    </Menu>
+                </>
+            ) : null}
+        </Toolbar>
     </AppBar>
-  );
+);
 }
 
 export default Navbar;
