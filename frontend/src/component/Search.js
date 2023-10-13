@@ -62,8 +62,19 @@ const Search = () => {
     };
 
     return (
-        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100vh', fontFamily: 'Crimson Pro' }}>
-            
+        <div style={{ padding: '20px',color:'white',display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100vh', fontFamily: 'Crimson Pro' }}>
+            {/* Instructions based on userRole */}
+            {userRole === '1' && (
+                <Typography style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    Please enter the name of the company you would like to know more about
+                </Typography>
+            )}
+            {userRole === '2' && (
+                <Typography style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    Please enter the skills you are looking to hire for
+                </Typography>
+            )}
+    
             <TextField
                 name='query'
                 variant="outlined"
@@ -78,6 +89,10 @@ const Search = () => {
                 style={{ marginBottom: '10px', width: '590px', height: '60px', backgroundColor: 'white', color: 'black', borderRadius: '5px'}}
                 //InputProps={{ style: { color: 'black' } }}
             />
+             {/* Disclaimer/Tip based on userRole */}
+             <Typography style={{ marginBottom: '10px', textAlign: 'center' }}>
+                {userRole === '1' ? "Disclaimer: You can search for only one company at a time" : "Tip: You can search for multiple skills by separating them using commas"}
+            </Typography>
             
             <Button variant="contained" color="primary" onClick={handleSearch} style={{ marginBottom: '20px', backgroundColor: 'white', color: 'black', borderRadius: '5px' }}>
                 Search
