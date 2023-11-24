@@ -5,6 +5,7 @@ import { TextField, Button, Card, CardContent, Typography } from '@mui/material'
 const Search = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
+    const [selectedStudent, setSelectedStudent] = useState(null);
     const [message, setMessage] = useState('No search done yet');
     const userRole = localStorage.getItem('userRole');
     const token = localStorage.getItem('token');
@@ -101,34 +102,50 @@ const Search = () => {
             <div style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 250px)', width: '100%' }}>
                 {results.length === 0 && <Typography>{message}</Typography>}
                 {results.length > 0 && results.map((result, index) => (
-                    <Card key={index} style={{ marginBottom: '10px', backgroundColor: 'white', color: '#50001', width: '510px', height: '160px', borderRadius: '10px' }}>
-                        <CardContent>
-                            {userRole === '1' && (
-                                <div>
-                                    <Typography>Name: {result.employeeName}</Typography>
-                                    <Typography>Email: {result.email}</Typography>
-                                    <Typography>Phone: {result.phone}</Typography>
-                                </div>
-                            )}
-                            {userRole === '2' && (
-                                <div>
-                                    <Typography>Name: {result.studentName}</Typography>
-                                    <Typography>Email: {result.email}</Typography>
-                                    <Typography>Phone: {result.phone}</Typography>
-                                    <Typography>Major: {result.major}</Typography>
-                                    <Typography>Degree: {result.degree}</Typography>
-                                    <Typography>Skills: {result.skills.join(', ')}</Typography>
-                                    <ul>
-                                        {result.skills.map((skill, sIndex) => (
-                                            <li key={sIndex}>{skill}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-                        </CardContent>
+                    <Card 
+                        onClick={userRole === '2' ? () => setSelectedStudent(result) : null}
+                        key={index} 
+                        style={{ marginBottom: '10px', backgroundColor: 'white', color: '#50001', width: '510px', height: '160px', borderRadius: '10px' }}>
+                            <CardContent>
+                                {userRole === '1' && (
+                                    <div>
+                                        <Typography>Name: {result.employeeName}</Typography>
+                                        <Typography>Email: {result.email}</Typography>
+                                        <Typography>Phone: {result.phone}</Typography>
+                                    </div>
+                                )}
+                                {userRole === '2' && (
+                                    <div>
+                                        <Typography>Name: {result.studentName}</Typography>
+                                        <Typography>Email: {result.email}</Typography>
+                                        <Typography>Phone: {result.phone}</Typography>
+                                        <Typography>Major: {result.major}</Typography>
+                                        <Typography>Degree: {result.degree}</Typography>
+                                        <Typography>Skills: {result.skills.join(', ')}</Typography>
+                                        <ul>
+                                            {result.skills.map((skill, sIndex) => (
+                                                <li key={sIndex}>{skill}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </CardContent>
                     </Card>
                 ))}
             </div>
+            {selectedStudent && (
+            <div style={{ position: "absolute", top: 0, right: 0, width: "50%", height: "100vh", overflowY: "scroll", backgroundColor: "#FFF" }}>
+                <div>
+                    <Typography>Name: {selectedStudent.studentName}</Typography>
+                    <Typography>Email: {selectedStudent.email}</Typography>
+                    <Typography>Phone: {selectedStudent.phone}</Typography>
+                    <iframe 
+                        src={`http://localhost:9000/api/students/${selectedStudent.studentID}/resume`} 
+                        style={{ width: "100%", height: "500px" }}
+                        title="Student Resume"
+                    />
+                </div>
+            </div>)}  
         </div>
     );
     

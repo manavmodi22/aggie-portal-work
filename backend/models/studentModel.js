@@ -40,6 +40,33 @@ const studentSchema = new mongoose.Schema({
         unique: true,
     },
     skills: [String],
+    summary: {type: String},
+    portfolio: {type: String},
+    linkedin: {type: String},
+    github: {type: String},
+    resume: {
+        data: Buffer,
+        contentType: String
+    },    
+    cohort: {   
+        type: Number,
+        enum: [0,1,2,3,4],
+        //required: true,
+    },
+    status: {
+        type: String,
+        enum: ['Actively searching for Internships', 
+        'Passively searching for Internships', 
+        'Not searching for Internships', 
+        'Actively Searching for Full-Time Positions', 
+        'Not searching for Full-Time Positions', 
+        'Passively searching for Full-Time Positions', 
+        'Looking to go to Graduate School',
+        'Employed Full Time',
+    ],
+        //required: true,
+    },
+    companiesAssociatedWith: [String],
     user: {
         type: ObjectId,
         ref: "User",

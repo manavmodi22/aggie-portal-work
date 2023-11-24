@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography } from '@mui/material';
-import Navbar from './Navbar';
 import axios from 'axios'; // Import axios for making API requests
 
 const Login = () => {

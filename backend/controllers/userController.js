@@ -3,61 +3,73 @@ const ErrorResponse = require('../utils/errorResponse');
 
 //load all users
 exports.allUsers = async (req, res, next) => {
-    //enable pagination
-    const pageSize = 10;
-    const page = Number(req.query.pageNumber) || 1;
-    const count = await User.find({}).estimatedDocumentCount();
-
     try {
-        const users = await User.find().sort({ createdAt: -1 }).select('-password')
-            .skip(pageSize * (page - 1))
-            .limit(pageSize)
-
+        const users = await User.find().sort({ createdAt: -1 }).select('-password');
         res.status(200).json({
             success: true,
-            users,
-            page,
-            pages: Math.ceil(count / pageSize),
-            count
-
+            users
         })
-        next();
     } catch (error) {
-        return next(error);
+        return next(new ErrorResponse(error.message, 500));
     }
 }
 
-//show single user
-exports.singleUser = async (req, res, next) => {
+
+//approve user
+exports.approveAccess = async (req, res, next) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findByIdAndUpdate(req.params.id, { status: "approved" }, { new: true });
         res.status(200).json({
             success: true,
             user
-        })
-        next();
-
+        });
     } catch (error) {
-        return next(error);
+        return next(new ErrorResponse(error.message, 500));
     }
 }
+
+
+//show single user
+exports.searchUsers = async (req, res, next) => {
+    try {
+        const query = req.query.q; 
+        const regex = new RegExp(query, 'i');
+        const users = await User.find({
+            $or: [
+                { firstName: regex },
+                { lastName: regex },
+                { email: regex }
+            ]
+        }).select('-password');
+
+        res.status(200).json({
+            success: true,
+            users
+        });
+    } catch (error) {
+        return next(new ErrorResponse(error.message, 500));
+    }
+}
+
 
 
 //edit user
 exports.editUser = async (req, res, next) => {
     try {
-        console.log(req.body);
+        // Remove fields that shouldn't be edited
+        delete req.body.email;
+        delete req.body.password;
+
         const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.status(200).json({
             success: true,
             user
-        })
-        next();
-
+        });
     } catch (error) {
-        return next(error);
+        return next(new ErrorResponse(error.message, 500));
     }
 }
+
 
 //delete user
 exports.deleteUser = async (req, res, next) => {

@@ -1,5 +1,7 @@
 const Student = require('../models/studentModel');
 const ErrorResponse = require('../utils/errorResponse');
+const fs = require('fs');
+
 
 // Create a new student
 exports.createStudent = async (req, res, next) => {
@@ -93,43 +95,65 @@ exports.searchStudentsBySkills = async (req, res, next) => {
   }
 };
 
+// Fetch student resume
+exports.getStudentResume = async (req, res, next) => {
+  try {
+    const student = await Student.findById(req.params.id);
 
-
-// Update student by studentID
-exports.updateStudent = async (req, res, next) => {
-    try {
-      const { id } = req.params; // Use "id" as the parameter name since it corresponds to ":id" in the route path
-      console.log(id);  
-      // Find the student by studentID
-      const student = await Student.findOne({ studentID: id });
-  
-      if (!student) {
-        return next(new ErrorResponse('Student not found', 404));
-      }
-  
-      // Make sure user is student owner
-      if (student.user.toString() !== req.user.id) {
-        return next(new ErrorResponse('Not authorized to update student', 401));
-      }
-  
-      // Check if "studentID" is present in req.body
-      if (req.body.studentID) {
-        return next(new ErrorResponse('Cannot update studentID field', 400));
-      }
-  
-      // Update other fields based on req.body
-      student.set(req.body);
-  
-      const updatedStudent = await student.save();
-  
-      res.status(200).json({
-        success: true,
-        student: updatedStudent,
-      });
-    } catch (error) {
-      return next(error);
+    if (!student || !student.resume || !student.resume.data) {
+      return next(new ErrorResponse('Resume not found', 404));
     }
-  };
+
+    // Set the content type to the resume's content type
+    res.set('Content-Type', student.resume.contentType);
+
+    // Send the resume data as a buffer
+    res.send(student.resume.data);
+  } catch (error) {
+    console.error('Error in getStudentResume:', error);
+    return next(new ErrorResponse('Error fetching student resume', 500));
+  }
+};
+
+// Update student by MongoDB _id
+exports.updateStudent = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const student = await Student.findById(id);
+
+    if (!student) {
+      return next(new ErrorResponse('Student not found', 404));
+    }
+
+    // Handle file upload
+    if (req.file) {
+      const resume = req.file;
+      student.resume = {
+        data: fs.readFileSync(resume.path),
+        contentType: resume.mimetype
+      };
+  
+      // Remove the file after saving to the database
+      fs.unlinkSync(resume.path);
+    }
+  
+    
+    // Update other fields
+    Object.entries(req.body).forEach(([key, value]) => {
+      if (key !== 'resume') {
+        student[key] = value;
+      }
+    });
+
+    const updatedStudent = await student.save();
+    res.status(200).json({ success: true, student: updatedStudent });
+  } catch (error) {
+    console.error('Error in updateStudent:', error);
+    return next(new ErrorResponse('Error updating student', 500));
+  }
+};
+
+
   
   // Delete student by studentID
   exports.deleteStudent = async (req, res, next) => {
@@ -137,7 +161,7 @@ exports.updateStudent = async (req, res, next) => {
       const { id } = req.params; // Use "id" as the parameter name since it corresponds to ":id" in the route path
   
       // Find the student by studentID and delete it
-      const result = await Student.deleteOne({ studentID: id });
+      const result = await Student.deleteOne({ _id: id });
   
       if (result.deletedCount === 0) {
         return next(new ErrorResponse('Student not found', 404));
@@ -156,24 +180,28 @@ exports.updateStudent = async (req, res, next) => {
 //get all students
 exports.getStudents = async (req, res, next) => {
   try {
-      const { page = 1, limit = 10 } = req.query;
-
-      const skip = (page - 1) * limit;
-
-      const students = await Student.find()
-          .skip(skip)
-          .limit(parseInt(limit));
-
-      const totalStudents = await Student.countDocuments();
-
+      const students = await Student.find();
       res.status(200).json({
           success: true,
-          students,
-          currentPage: page,
-          totalPages: Math.ceil(totalStudents / limit),
-          totalStudents,
+          students
       });
   } catch (error) {
-      return next(error);
+      return next(new ErrorResponse(error.message, 500));
+  }
+};
+
+// Fetch student by MongoDB _id
+exports.getStudentById = async (req, res, next) => {
+  try {
+    const student = await Student.findById(req.params.id);
+    if (!student) {
+      return next(new ErrorResponse('Student not found', 404));
+    }
+    res.status(200).json({
+      success: true,
+      student,
+    });
+  } catch (error) {
+    return next(error);
   }
 };

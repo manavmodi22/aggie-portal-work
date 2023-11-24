@@ -6,24 +6,39 @@ const {
     updateStudent,
     deleteStudent,
     getStudents,
+    getStudentResume,
+    getStudentById
 } = require('../controllers/studentController');
 const { isAuthenticated } = require('../middleware/auth');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 // Student routes
 
 // Create a new student
-router.post('/student/create', isAuthenticated, createStudent);
+router.post('/student/create', createStudent);
 
-// Search for students by skills with pagination
+// Get all students
+router.get('/students/all', getStudents);
+
+//Fetch student by id
+router.get('/students/:id', getStudentById);
+
+// Search for students by skills with pagination 
 router.get('/students', searchStudentsBySkills);
 
+// Fetch Student Resume
+router.get('/students/:studentID/resume', getStudentResume);
+
 // Update a student
-router.put('/student/update/:id', isAuthenticated, updateStudent);
+router.put('/student/update/:id', upload.single('resume'), updateStudent);
 
 // Delete a student
 router.delete('/student/delete/:id', deleteStudent);
 
-// Get all students
-router.get('/students/all', isAuthenticated, getStudents);
+//view resume
+router.get('/students/resume/:id', getStudentResume);
+
+
 
 module.exports = router;

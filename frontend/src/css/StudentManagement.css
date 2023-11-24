@@ -1,0 +1,92 @@
+/* UserManagement.css */
+.table {
+    width: calc(100% - 240px); /* Adjust width to avoid navbar and sidebar */
+    margin-left: 240px; /* Same as sidebar width to prevent overlap */
+    border-collapse: collapse;
+    border: 1px solid #ddd; /* Add border around the table */
+  }
+  
+  .table td, .table th {
+    border: 1px solid #ddd; /* Add border to cells */
+    text-align: center; /* Center text horizontally */
+    vertical-align: middle; /* Center text vertically */
+    white-space: normal; /* Allow text to wrap */
+    padding: 0.5em; /* Add some padding for text */
+  }
+
+  .table td.skills-list {
+    text-align: left; /* Align text to the left for skills column */
+    padding-left: 1em; /* Add some padding on the left */
+  }
+  
+  .table th {
+    background-color: #782424;
+    color: white;
+  }
+  
+  .table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .table tr:hover {
+    background-color: #ddd;
+  }
+  .table tr {
+    cursor: pointer; /* Changes the cursor to a hand (pointer) when hovering over a row */
+  }
+  
+  /* Style the buttons */
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Adjust the gap between buttons as needed */
+  }
+  
+  .button {
+    background-color: #782424; /* Aggie Maroon color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px; /* Optional: if you want rounded buttons */
+    transition: background-color 0.3s;
+  }
+  
+  .button:last-child {
+    margin-bottom: 0; /* No space after the last button */
+  }
+  
+  .button:hover {
+    background-color: #5d1a1d; /* A darker shade for hover */
+  }
+  
+  .button-group .MuiButton-root {
+    background-color: #782424; /* Aggie Maroon color */
+    color: white;
+    width: auto;
+    /* ... other styles ... */
+  }
+  
+  .button-group .MuiButton-root:hover {
+    background-color: #5d1a1d; /* A darker shade for hover */
+  }
+  
+  /* UserManagement.css */
+ .wrap-text-cell {
+  white-space: normal !important; /* Allow text to wrap */
+  word-break: break-word; /* Break words if they exceed the TableCell width */
+  max-width: 200px; /* Adjust the maximum width as needed */
+}
+
+/* Adjust the styling for the modal content */
+.modal-content {
+  padding: 20px; /* Add padding to the modal content */
+}
+
+/* UserManagement.css */
+.table-container {
+  overflow-x: hidden; /* Disable horizontal scrolling */
+}

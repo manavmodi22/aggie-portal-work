@@ -1,0 +1,44 @@
+/* Sidebar.css */
+.sidebar {
+    width: 240px; /* Adjust width as needed */
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #782424; /* Aggie Maroon color */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000; /* Ensure it's above other content */
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+  }
+  
+  .sidebar li {
+    border: 1px solid white; /* White border around nav item */
+  }
+  
+  .sidebar li.selected,
+  .sidebar li:hover {
+    background-color: white;
+    color: #782424;
+  }
+  
+  .sidebar a {
+    text-decoration: none;
+    color: inherit; /* Use current color */
+    padding: 15px 20px;
+    display: block;
+  }
+  
+  .sidebar-header {
+    padding: 20px;
+    background-color: #5d1a1d; /* A slightly darker shade for the header */
+    font-size: 1.5em;
+  }
+  
