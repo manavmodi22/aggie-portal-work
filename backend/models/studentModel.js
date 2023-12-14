@@ -32,12 +32,10 @@ const studentSchema = new mongoose.Schema({
     major:
     {
         type: String,
-        unique: true,
     },
     degree:
     {
         type: String,
-        unique: true,
     },
     skills: [String],
     summary: {type: String},
@@ -51,7 +49,7 @@ const studentSchema = new mongoose.Schema({
     cohort: {   
         type: Number,
         enum: [0,1,2,3,4],
-        //required: true,
+        required: true,
     },
     status: {
         type: String,
@@ -67,11 +65,7 @@ const studentSchema = new mongoose.Schema({
         //required: true,
     },
     companiesAssociatedWith: [String],
-    user: {
-        type: ObjectId,
-        ref: "User",
-        required: true
-    },
 }, { timestamps: true })
+
 
 module.exports = mongoose.model("Student", studentSchema);

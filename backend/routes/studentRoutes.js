@@ -7,7 +7,8 @@ const {
     deleteStudent,
     getStudents,
     getStudentResume,
-    getStudentById
+    getStudentById,
+    uploadStudentsFromExcel
 } = require('../controllers/studentController');
 const { isAuthenticated } = require('../middleware/auth');
 const multer = require('multer');
@@ -39,6 +40,7 @@ router.delete('/student/delete/:id', deleteStudent);
 //view resume
 router.get('/students/resume/:id', getStudentResume);
 
-
+// Upload students from Excel
+router.post('/students/create/excel', upload.single('file'), uploadStudentsFromExcel);
 
 module.exports = router;

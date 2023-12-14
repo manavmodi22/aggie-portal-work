@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Fab, Zoom, Tooltip } from '@mui/material';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import StudentDetailsModal from './StudentDetailsModal';
+import BulkUploadStudentModal from './BulkStudentUploadModal';
 import CreateStudentModal from './CreateStudentModal';
-import Fab from '@mui/material/Fab'; // Import FAB
-import AddIcon from '@mui/icons-material/Add'; // Import Add Icon
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import CreateIcon from '@mui/icons-material/Create';
+import UploadIcon from '@mui/icons-material/Upload';
 import '../css/StudentManagement.css';
 
 const StudentManagement = () => {
+  const [fabOpen, setFabOpen] = useState(false);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isBulkUploadModalOpen, setBulkUploadModalOpen] = useState(false);
   const [students, setStudents] = useState([]);
   const [currentStudent, setCurrentStudent] = useState(null);
   const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -44,6 +50,32 @@ const StudentManagement = () => {
     }, 0); // Short timeout to ensure state updates correctly
   };
 
+  const handleToggleFab = () => {
+    setFabOpen(!fabOpen);
+  };
+
+  const handleOpenCreateModal = () => {
+    setCreateModalOpen(true);
+    setFabOpen(false);
+  };
+
+  const handleOpenBulkUploadModal = () => {
+    setBulkUploadModalOpen(true);
+    setFabOpen(false);
+  };
+
+  const fabStyle = {
+    position: 'fixed',
+    bottom: 16, // theme.spacing(2)
+    right: 16, // theme.spacing(2)
+  };
+
+  // Additional styles for the secondary FABs
+  const secondaryFabStyle = (bottomSpacing) => ({
+    ...fabStyle,
+    bottom: `calc(${fabStyle.bottom}px + ${bottomSpacing}px)`, // Adjust bottom spacing based on the parameter
+  });
+
 
   return (
     <div className="content">
@@ -51,7 +83,7 @@ const StudentManagement = () => {
       <Navbar />
       <h1>Student Management</h1>
   
-      <Fab 
+      {/* <Fab 
         color="primary" 
         aria-label="add" 
         style={{
@@ -66,7 +98,35 @@ const StudentManagement = () => {
         onClick={() => setCreateModalOpen(true)}
       >
         <AddIcon />
-      </Fab>
+      </Fab> */}
+
+<Zoom in={!fabOpen}>
+        <Fab color="primary" sx={fabStyle} onClick={handleToggleFab}>
+          <AddIcon />
+        </Fab>
+      </Zoom>
+
+      <Zoom in={fabOpen} unmountOnExit>
+        <Fab color="secondary" sx={fabStyle} onClick={handleToggleFab}>
+          <CloseIcon />
+        </Fab>
+      </Zoom>
+
+      <Zoom in={fabOpen} unmountOnExit style={{ transitionDelay: `${fabOpen ? 50 : 0}ms` }}>
+        <Tooltip title="Create Single Student Record" placement="left">
+          <Fab color="primary" sx={secondaryFabStyle(60)} onClick={handleOpenCreateModal}>
+            <CreateIcon />
+          </Fab>
+        </Tooltip>
+      </Zoom>
+
+      <Zoom in={fabOpen} unmountOnExit style={{ transitionDelay: `${fabOpen ? 100 : 0}ms` }}>
+        <Tooltip title="Bulk Upload Student Records - Excel" placement="left">
+          <Fab color="primary" sx={secondaryFabStyle(120)} onClick={handleOpenBulkUploadModal}>
+            <UploadIcon />
+          </Fab>
+        </Tooltip>
+      </Zoom>
   
       <div className="table-container">
         <table className="table">
@@ -118,8 +178,14 @@ const StudentManagement = () => {
         onClose={() => setCreateModalOpen(false)}
         refreshStudents={refreshStudents}
       />
+      <BulkUploadStudentModal
+        open={isBulkUploadModalOpen}
+        onClose={() => setBulkUploadModalOpen(false)}
+        refreshStudents={refreshStudents}
+      />
     </div>
   );
 };
+
 
 export default StudentManagement;

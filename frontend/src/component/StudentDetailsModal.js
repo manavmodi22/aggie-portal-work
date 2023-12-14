@@ -5,6 +5,9 @@ import axios from 'axios';
 import '../css/StudentDetailModal.css';
 
 
+
+
+
 const modalStyle = {
   position: 'absolute',
   top: '50%',

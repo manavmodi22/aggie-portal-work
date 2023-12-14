@@ -1,6 +1,10 @@
+const mongoose = require('mongoose');
 const Student = require('../models/studentModel');
 const ErrorResponse = require('../utils/errorResponse');
 const fs = require('fs');
+const xlsx = require('xlsx');
+const emailValidator = require('email-validator');
+
 
 
 // Create a new student
@@ -205,3 +209,87 @@ exports.getStudentById = async (req, res, next) => {
     return next(error);
   }
 };
+
+
+exports.uploadStudentsFromExcel = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      throw new ErrorResponse('No file uploaded. Please upload an Excel file.', 400);
+    }
+
+    if (!req.file.originalname.match(/\.(xlsx|xls)$/)) {
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({ error: 'Invalid file format. Only .xlsx and .xls files are allowed.' });
+    }
+
+
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const studentsData = xlsx.utils.sheet_to_json(worksheet);
+
+    let validStudents = [];
+    let invalidEntries = [];
+    let uniqueKeys = new Set();
+
+    studentsData.forEach(student => {
+      if (validateStudentData(student)) {
+        let uniqueKey = `${student.studentID}-${student.email}`; // Adjust based on your unique fields
+        if (!uniqueKeys.has(uniqueKey)) {
+          uniqueKeys.add(uniqueKey);
+          validStudents.push(student);
+        } else {
+          invalidEntries.push({ student, error: 'Duplicate record' });
+        }
+      } else {
+        invalidEntries.push({ student, error: 'Invalid data format or missing required fields' });
+      }
+    });
+
+    if (validStudents.length > 0) {
+      await Student.insertMany(validStudents, { ordered: false });
+    }
+
+    fs.unlinkSync(req.file.path);
+
+    res.status(201).json({
+      success: true,
+      createdCount: validStudents.length,
+      invalidEntries: invalidEntries
+    });
+  } catch (error) {
+    console.error('Error processing file:', error);
+    fs.unlinkSync(req.file.path);
+
+    if (error.code === 11000) {
+      const duplicateFields = error.keyValue ? Object.keys(error.keyValue).join(', ') : 'unknown fields';
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Duplicate key error', 
+        error: `Duplicate entry found for ${duplicateFields}. Please ensure all entries are unique.`, 
+        details: error.keyValue || {}
+      });
+    }
+
+
+    if (error instanceof mongoose.Error.ValidationError) {
+      const errors = Object.keys(error.errors).map(key => {
+        return { field: key, message: error.errors[key].message };
+      });
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Validation error for one or more fields.', 
+        errors: errors 
+      });
+    }
+
+    return next(new ErrorResponse(`Error processing file: ${error.message}`, 500));
+  }
+};
+
+function validateStudentData(student) {
+  // Adjust validation as per your updated schema
+  return student.studentID && student.studentName && 
+         emailValidator.validate(student.email) &&
+         !isNaN(student.studentID); // Example validation
+}
