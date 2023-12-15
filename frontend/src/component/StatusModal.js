@@ -1,23 +1,35 @@
-import React, { useState } from 'react';
-import { Modal, Box, Typography, Select, MenuItem, Button } from '@mui/material';
-import '../css/Modal.css';
-
+import React, { useState } from "react";
+import {
+  Modal,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  Button,
+} from "@mui/material";
+import "../css/Modal.css";
 
 const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
 };
 
-const StatusModal = ({ open, handleClose, userId, currentStatus, handleChangeStatus }) => {
+const StatusModal = ({
+  open,
+  handleClose,
+  userId,
+  currentStatus,
+  handleChangeStatus,
+}) => {
   const [selectedStatus, setSelectedStatus] = useState(currentStatus);
 
-  const statuses = ['active', 'inactive', 'banned', 'pending', 'emailVerified'];
+  const statuses = ["active", "inactive", "banned", "pending", "emailVerified"];
 
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
@@ -33,9 +45,7 @@ const StatusModal = ({ open, handleClose, userId, currentStatus, handleChangeSta
         <Typography variant="h6" component="h2">
           Change User Status
         </Typography>
-        <Typography sx={{ mt: 2 }}>
-          Current status: {currentStatus}
-        </Typography>
+        <Typography sx={{ mt: 2 }}>Current status: {currentStatus}</Typography>
         <Select
           labelId="status-select-label"
           id="status-select"
@@ -45,11 +55,18 @@ const StatusModal = ({ open, handleClose, userId, currentStatus, handleChangeSta
           fullWidth
           sx={{ mt: 2 }}
         >
-          {statuses.filter(status => status !== currentStatus).map((status) => (
-            <MenuItem key={status} value={status}>{status}</MenuItem>
-          ))}
+          {statuses
+            .filter((status) => status !== currentStatus)
+            .map((status) => (
+              <MenuItem key={status} value={status}>
+                {status}
+              </MenuItem>
+            ))}
         </Select>
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }} className="button-container">
+        <Box
+          sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}
+          className="button-container"
+        >
           <Button onClick={handleClose} className="button">
             Cancel
           </Button>

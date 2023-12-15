@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { 
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, 
-  Typography, LinearProgress, Snackbar, Alert, IconButton
-} from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+  LinearProgress,
+  Snackbar,
+  Alert,
+  IconButton,
+} from "@mui/material";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios";
 
 const BulkStudentUploadModal = ({ open, onClose, refreshStudents }) => {
   const [file, setFile] = useState(null);
@@ -13,8 +21,8 @@ const BulkStudentUploadModal = ({ open, onClose, refreshStudents }) => {
   const [uploadedBytes, setUploadedBytes] = useState(0);
   const [totalBytes, setTotalBytes] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -23,41 +31,48 @@ const BulkStudentUploadModal = ({ open, onClose, refreshStudents }) => {
 
   const handleUpload = async () => {
     if (!file) {
-      setSnackbarMessage('Please select a file to upload');
-      setSnackbarSeverity('warning');
+      setSnackbarMessage("Please select a file to upload");
+      setSnackbarSeverity("warning");
       setSnackbarOpen(true);
       return;
     }
-  
+
     const formData = new FormData();
-    formData.append('file', file);
-  
+    formData.append("file", file);
+
     try {
-      const response = await axios.post('http://localhost:9000/api/students/create/excel', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        onUploadProgress: (progressEvent) => {
-          setUploadedBytes(progressEvent.loaded);
-          setUploadProgress(Math.round((progressEvent.loaded * 100) / progressEvent.total));
+      const response = await axios.post(
+        "http://localhost:9000/api/students/create/excel",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            setUploadedBytes(progressEvent.loaded);
+            setUploadProgress(
+              Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            );
+          },
         }
-      });
-  
+      );
+
       if (response.status === 201) {
-        setSnackbarMessage('Upload successful');
-        setSnackbarSeverity('success');
+        setSnackbarMessage("Upload successful");
+        setSnackbarSeverity("success");
         setSnackbarOpen(true);
         refreshStudents();
         onClose();
         resetUploadState();
       }
     } catch (error) {
-      console.error('Error uploading file:', error);
-      const errorMessage = error.response && error.response.data && error.response.data.error
-                           ? error.response.data.error
-                           : 'Error during upload. Please check the file and try again.';
+      console.error("Error uploading file:", error);
+      const errorMessage =
+        error.response && error.response.data && error.response.data.error
+          ? error.response.data.error
+          : "Error during upload. Please check the file and try again.";
       setSnackbarMessage(errorMessage);
-      setSnackbarSeverity('error');
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
@@ -86,18 +101,14 @@ const BulkStudentUploadModal = ({ open, onClose, refreshStudents }) => {
           <IconButton
             aria-label="close"
             onClick={handleCloseModal}
-            style={{ position: 'absolute', right: 8, top: 8 }}
+            style={{ position: "absolute", right: 8, top: 8 }}
           >
             <CloseIcon />
           </IconButton>
         </Typography>
       </DialogTitle>
       <DialogContent>
-        <input
-          type="file"
-          accept=".xlsx, .xls"
-          onChange={handleFileChange}
-        />
+        <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
         <Typography variant="body2" color="textSecondary">
           Accepted formats: .xlsx, .xls | Max size: 50 MB
         </Typography>
@@ -105,17 +116,29 @@ const BulkStudentUploadModal = ({ open, onClose, refreshStudents }) => {
           <>
             <LinearProgress variant="determinate" value={uploadProgress} />
             <Typography variant="body2" color="textSecondary">
-              {`${(uploadedBytes / 1024 / 1024).toFixed(2)} MB of ${(totalBytes / 1024 / 1024).toFixed(2)} MB uploaded`}
+              {`${(uploadedBytes / 1024 / 1024).toFixed(2)} MB of ${(
+                totalBytes /
+                1024 /
+                1024
+              ).toFixed(2)} MB uploaded`}
             </Typography>
           </>
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleUpload} startIcon={<UploadFileIcon />} color="primary">
+        <Button
+          onClick={handleUpload}
+          startIcon={<UploadFileIcon />}
+          color="primary"
+        >
           Upload
         </Button>
       </DialogActions>
-      <Snackbar open={snackbarOpen} autoHideDuration={8000} onClose={handleCloseSnackbar}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={8000}
+        onClose={handleCloseSnackbar}
+      >
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>

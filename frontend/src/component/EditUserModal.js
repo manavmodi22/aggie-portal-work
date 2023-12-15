@@ -1,5 +1,5 @@
 // EditUserModal.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -12,25 +12,25 @@ import {
   FormControl,
   IconButton,
   TextField,
-  Typography
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import '../css/Modal.css';
+  Typography,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import "../css/Modal.css";
 
 const roleMapping = {
-  0: 'Admin',
-  1: 'Mays Faculty',
-  2: 'Employer/ Recruiter',
+  0: "Admin",
+  1: "Mays Faculty",
+  2: "Employer/ Recruiter",
 };
 
 const statusMapping = {
-  active: 'active',
-  inactive: 'inactive',
-  banned: 'banned',
-  pending: 'pending',
-  emailVerified: 'emailVerified',
+  active: "active",
+  inactive: "inactive",
+  banned: "banned",
+  pending: "pending",
+  emailVerified: "emailVerified",
 };
 
 // Update your EditUserModal component
@@ -38,7 +38,7 @@ const EditUserModal = ({ open, onClose, user, updateUser }) => {
   const [editedUser, setEditedUser] = useState({});
   const [isEditing, setIsEditing] = useState({
     firstName: false,
-    lastName: false
+    lastName: false,
   });
   const [errors, setErrors] = useState({});
 
@@ -48,7 +48,7 @@ const EditUserModal = ({ open, onClose, user, updateUser }) => {
         ...user,
         // Ensure role and status are set correctly
         role: roleMapping[user.role.toString()], // Convert to string if it's not already
-        status: user.status // Assuming status is already in the correct format
+        status: user.status, // Assuming status is already in the correct format
       });
     }
   }, [user]);
@@ -77,25 +77,26 @@ const EditUserModal = ({ open, onClose, user, updateUser }) => {
     const { name, value } = event.target;
     // Update state with the new value
     setEditedUser({ ...editedUser, [name]: value });
-};
+  };
 
   const handleSubmit = async () => {
     try {
       // Convert role back to a number before submitting
       const submissionData = {
         ...editedUser,
-        role: Object.keys(roleMapping).find(key => roleMapping[key] === editedUser.role),
+        role: Object.keys(roleMapping).find(
+          (key) => roleMapping[key] === editedUser.role
+        ),
       };
-  
+
       // Make the API call to update the user with the converted role
       await updateUser(submissionData);
       onClose(); // Close the modal
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error("Error updating user:", error);
       // Show an error message
     }
   };
-  
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -105,7 +106,7 @@ const EditUserModal = ({ open, onClose, user, updateUser }) => {
           <Typography variant="subtitle1">User ID: {user._id}</Typography>
         </FormControl>
 
-        {['firstName', 'lastName'].map((field) => (
+        {["firstName", "lastName"].map((field) => (
           <FormControl fullWidth margin="normal" key={field}>
             <TextField
               label={field.charAt(0).toUpperCase() + field.slice(1)} // Capitalize the first letter
@@ -119,7 +120,11 @@ const EditUserModal = ({ open, onClose, user, updateUser }) => {
                   </IconButton>
                 ) : (
                   <>
-                    <IconButton onClick={() => handleConfirmEdit(field, editedUser[field])}>
+                    <IconButton
+                      onClick={() =>
+                        handleConfirmEdit(field, editedUser[field])
+                      }
+                    >
                       <CheckIcon />
                     </IconButton>
                     <IconButton onClick={() => handleCancelEdit(field)}>
@@ -132,34 +137,38 @@ const EditUserModal = ({ open, onClose, user, updateUser }) => {
           </FormControl>
         ))}
 
-<FormControl fullWidth margin="normal">
+        <FormControl fullWidth margin="normal">
           <InputLabel id="role-label">Role</InputLabel>
           <Select
             labelId="role-label"
             label="Role"
             name="role"
-            value={editedUser.role || ''} // Fallback to empty string if undefined
+            value={editedUser.role || ""} // Fallback to empty string if undefined
             onChange={handleSelectChange}
           >
             {/* Update these to match the roleMapping */}
             {Object.entries(roleMapping).map(([key, value]) => (
-              <MenuItem key={key} value={value}>{value}</MenuItem>
+              <MenuItem key={key} value={value}>
+                {value}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
 
         <FormControl fullWidth margin="normal">
           <InputLabel id="status-label">Status</InputLabel>
-            <Select
-              labelId="status-label"
-              label="Status"
-              name="status"
-              value={editedUser.status || ''} // Fallback to empty string if undefined
-              onChange={handleSelectChange}
-            >
+          <Select
+            labelId="status-label"
+            label="Status"
+            name="status"
+            value={editedUser.status || ""} // Fallback to empty string if undefined
+            onChange={handleSelectChange}
+          >
             {/* Update these to match the statusMapping */}
             {Object.keys(statusMapping).map((key) => (
-              <MenuItem key={key} value={key}>{statusMapping[key]}</MenuItem>
+              <MenuItem key={key} value={key}>
+                {statusMapping[key]}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>

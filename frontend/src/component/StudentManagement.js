@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Fab, Zoom, Tooltip } from '@mui/material';
-import Sidebar from './Sidebar';
-import Navbar from './Navbar';
-import StudentDetailsModal from './StudentDetailsModal';
-import BulkUploadStudentModal from './BulkStudentUploadModal';
-import CreateStudentModal from './CreateStudentModal';
-import AddIcon from '@mui/icons-material/Add';
-import CloseIcon from '@mui/icons-material/Close';
-import CreateIcon from '@mui/icons-material/Create';
-import UploadIcon from '@mui/icons-material/Upload';
-import '../css/StudentManagement.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Fab, Zoom, Tooltip } from "@mui/material";
+import Sidebar from "./Sidebar";
+import Navbar from "./Navbar";
+import StudentDetailsModal from "./StudentDetailsModal";
+import BulkUploadStudentModal from "./BulkStudentUploadModal";
+import CreateStudentModal from "./CreateStudentModal";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import CreateIcon from "@mui/icons-material/Create";
+import UploadIcon from "@mui/icons-material/Upload";
+import "../css/StudentManagement.css";
 
 const StudentManagement = () => {
   const [fabOpen, setFabOpen] = useState(false);
@@ -23,10 +23,12 @@ const StudentManagement = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/api/students/all');
+        const response = await axios.get(
+          "http://localhost:9000/api/students/all"
+        );
         setStudents(response.data.students); // Adjust according to your API response
       } catch (error) {
-        console.error('Error fetching students:', error);
+        console.error("Error fetching students:", error);
       }
     };
 
@@ -35,10 +37,12 @@ const StudentManagement = () => {
 
   const refreshStudents = async () => {
     try {
-      const response = await axios.get('http://localhost:9000/api/students/all');
+      const response = await axios.get(
+        "http://localhost:9000/api/students/all"
+      );
       setStudents(response.data.students);
     } catch (error) {
-      console.error('Error refreshing students:', error);
+      console.error("Error refreshing students:", error);
     }
   };
 
@@ -65,7 +69,7 @@ const StudentManagement = () => {
   };
 
   const fabStyle = {
-    position: 'fixed',
+    position: "fixed",
     bottom: 16, // theme.spacing(2)
     right: 16, // theme.spacing(2)
   };
@@ -76,13 +80,12 @@ const StudentManagement = () => {
     bottom: `calc(${fabStyle.bottom}px + ${bottomSpacing}px)`, // Adjust bottom spacing based on the parameter
   });
 
-
   return (
     <div className="content">
       <Sidebar />
       <Navbar />
       <h1>Student Management</h1>
-  
+
       {/* <Fab 
         color="primary" 
         aria-label="add" 
@@ -100,7 +103,7 @@ const StudentManagement = () => {
         <AddIcon />
       </Fab> */}
 
-<Zoom in={!fabOpen}>
+      <Zoom in={!fabOpen}>
         <Fab color="primary" sx={fabStyle} onClick={handleToggleFab}>
           <AddIcon />
         </Fab>
@@ -112,22 +115,38 @@ const StudentManagement = () => {
         </Fab>
       </Zoom>
 
-      <Zoom in={fabOpen} unmountOnExit style={{ transitionDelay: `${fabOpen ? 50 : 0}ms` }}>
+      <Zoom
+        in={fabOpen}
+        unmountOnExit
+        style={{ transitionDelay: `${fabOpen ? 50 : 0}ms` }}
+      >
         <Tooltip title="Create Single Student Record" placement="left">
-          <Fab color="primary" sx={secondaryFabStyle(60)} onClick={handleOpenCreateModal}>
+          <Fab
+            color="primary"
+            sx={secondaryFabStyle(60)}
+            onClick={handleOpenCreateModal}
+          >
             <CreateIcon />
           </Fab>
         </Tooltip>
       </Zoom>
 
-      <Zoom in={fabOpen} unmountOnExit style={{ transitionDelay: `${fabOpen ? 100 : 0}ms` }}>
+      <Zoom
+        in={fabOpen}
+        unmountOnExit
+        style={{ transitionDelay: `${fabOpen ? 100 : 0}ms` }}
+      >
         <Tooltip title="Bulk Upload Student Records - Excel" placement="left">
-          <Fab color="primary" sx={secondaryFabStyle(120)} onClick={handleOpenBulkUploadModal}>
+          <Fab
+            color="primary"
+            sx={secondaryFabStyle(120)}
+            onClick={handleOpenBulkUploadModal}
+          >
             <UploadIcon />
           </Fab>
         </Tooltip>
       </Zoom>
-  
+
       <div className="table-container">
         <table className="table">
           <thead>
@@ -157,11 +176,11 @@ const StudentManagement = () => {
                   </li>
                 </td>
                 <td className="table-wrap">{student.status}</td>
-                </tr>
+              </tr>
             ))}
           </tbody>
         </table>
-        </div>
+      </div>
       {currentStudent && (
         <StudentDetailsModal
           open={isDetailsModalOpen}
@@ -186,6 +205,5 @@ const StudentManagement = () => {
     </div>
   );
 };
-
 
 export default StudentManagement;
