@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const {
   signup,
-  signin,
+  login,
   logout,
   userProfile,
-  verifyCode,
+  //verifyCode,
 } = require("../controllers/authController");
 const { isAuthenticated } = require("../middleware/auth");
 
@@ -13,9 +13,9 @@ const { isAuthenticated } = require("../middleware/auth");
 // /api/signup
 router.post("/signup", signup);
 // /api/verify
-router.post("/verify-code", verifyCode);
+//router.post("/verify-code", verifyCode);
 // /api/signin
-router.post("/signin", signin);
+router.post("/login", login);
 // /api/logout
 router.get("/logout", logout);
 // /api/me

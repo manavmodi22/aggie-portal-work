@@ -27,36 +27,7 @@ exports.createStudent = async (req, res, next) => {
   }
 };
 
-// exports.searchStudentsBySkills = async (req, res, next) => {
-//     try {
-//         const { skills, page = 1, perPage = 10 } = req.query;
-//         if (!skills) {
-//             return res.status(400).json({ error: 'Skills parameter is required' });
-//         }
 
-//         // Split the skills string by commas and trim whitespace
-//         const skillList = skills.split(',').map(skill => skill.trim());
-
-//         // Build a regex pattern to match any case and substring variations of the skills
-//         const regexSkills = skillList.map(skill => new RegExp(skill.replace('.', '\\.'), 'i'));
-
-//         // Calculate the skip value for pagination
-//         const skip = (page - 1) * perPage;
-
-//         // Use the $in operator with $or and $regex to find students with matching skills
-//         const students = await Student.find({
-//             $or: regexSkills.map(skill => ({ skills: { $regex: skill } })),
-//         })
-//             .sort({ skills: -1 }) // Sort by the number of matching skills in descending order
-//             .skip(skip)
-//             .limit(parseInt(perPage))
-//             .exec();
-
-//         res.json(students);
-//     } catch (error) {
-//         return next(error);
-//     }
-// };
 
 exports.searchStudentsBySkills = async (req, res, next) => {
   try {
@@ -175,18 +146,60 @@ exports.deleteStudent = async (req, res, next) => {
   }
 };
 
-//get all students
+// get all students with search, filters, and pagination
 exports.getStudents = async (req, res, next) => {
   try {
-    const students = await Student.find();
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Search and filter parameters
+    const searchField = req.query.searchField;
+    const searchTerm = req.query.searchTerm;
+    const filters = req.query.filters ? JSON.parse(req.query.filters) : {};
+
+    // Build the query
+    let query = {};
+    if (searchTerm && searchField) {
+      // Use regular expression for partial and case-insensitive matching
+      query[searchField] = { $regex: searchTerm, $options: 'i' };
+    }
+
+    // Add filters to the query
+    if (req.query.filters) {
+      const parsedFilters = JSON.parse(decodeURIComponent(req.query.filters));
+      for (const key in parsedFilters) {
+        if (parsedFilters[key].length > 0) {
+          if (key === "skills" || key === "companiesAssociatedWith") {
+            // Construct a regex pattern to match any of the skills in the string
+            let skillsRegex = parsedFilters[key].map(skill => `(?=.*${skill})`).join('');
+            query[key] = { $regex: skillsRegex, $options: 'i' };
+          } 
+          else {
+            query[key] = { $in: parsedFilters[key] };
+          }
+        }
+      }
+    }
+
+    // Fetch students based on the query
+    const students = await Student.find(query).skip(skip).limit(limit);
+    const totalStudents = await Student.countDocuments(query);
+    
+    // Send response
     res.status(200).json({
       success: true,
       students,
+      currentPage: page,
+      totalPages: Math.ceil(totalStudents / limit),
+      totalStudents,
     });
   } catch (error) {
     return next(new ErrorResponse(error.message, 500));
   }
 };
+
 
 // Fetch student by MongoDB _id
 exports.getStudentById = async (req, res, next) => {
@@ -301,3 +314,126 @@ function validateStudentData(student) {
     !isNaN(student.studentID)
   ); // Example validation
 }
+
+exports.getDistinctMajors = async (req, res, next) => {
+  try {
+    const majors = await Student.distinct("major");
+    res.status(200).json({
+      success: true,
+      majors,
+    });
+  } catch (error) {
+    console.error("Error occurred in getDistinctMajors:", error);
+    return next(new ErrorResponse("Error fetching distinct majors", 500));
+  }
+};
+
+exports.getDistinctMajors = async (req, res, next) => {
+  try {
+    const majors = await Student.distinct("major");
+    res.status(200).json({
+      success: true,
+      majors,
+    });
+  } catch (error) {
+    console.error("Error occurred in getDistinctMajors:", error);
+    return next(new ErrorResponse("Error fetching distinct majors", 500));
+  }
+};
+
+exports.getDistinctSkills = async (req, res, next) => {
+  try {
+    // Aggregate to transform the stringified array into a real array
+    const skillsData = await Student.aggregate([
+      {
+        $project: {
+          skillsArray: {
+            $map: {
+              input: "$skills",
+              as: "skill",
+              in: { $split: [{ $substrCP: ["$$skill", 2, { $subtract: [{ $strLenCP: "$$skill" }, 4] }] }, "', '"] }
+            }
+          }
+        }
+      },
+      { $unwind: "$skillsArray" },
+      { $unwind: "$skillsArray" },
+      { $group: { _id: "$skillsArray" } },
+      { $project: { _id: 0, skill: "$_id" } }
+    ]);
+
+    // Flatten the results and deduplicate
+    const distinctSkills = [...new Set(skillsData.map(skillDoc => skillDoc.skill))];
+
+    res.status(200).json({
+      success: true,
+      skills: distinctSkills
+    });
+  } catch (error) {
+    console.error("Error occurred in getDistinctSkills:", error);
+    res.status(500).json({ error: "Error fetching distinct skills" });
+  }
+};
+
+
+exports.getDistinctCohorts = async (req, res, next) => {
+  try {
+    const cohorts = await Student.distinct("cohort");
+    res.status(200).json({
+      success: true,
+      cohorts,
+    });
+  } catch (error) {
+    console.error("Error occurred in getDistinctCohorts:", error);
+    return next(new ErrorResponse("Error fetching distinct cohorts", 500));
+  }
+};
+
+exports.getDistinctStatuses = async (req, res, next) => {
+  try {
+    const statuses = await Student.distinct("status");
+    res.status(200).json({
+      success: true,
+      statuses,
+    });
+  } catch (error) {
+    console.error("Error occurred in getDistinctStatuses:", error);
+    return next(new ErrorResponse("Error fetching distinct statuses", 500));
+  }
+};
+
+
+exports.getDistinctCompanies = async (req, res, next) => {
+  try {
+    // Aggregate to transform the stringified array into a real array
+    const companiesData = await Student.aggregate([
+      {
+        $project: {
+          companiesArray: {
+            $map: {
+              input: "$companiesAssociatedWith",
+              as: "company",
+              in: { $split: [{ $substrCP: ["$$company", 2, { $subtract: [{ $strLenCP: "$$company" }, 4] }] }, "', '"] }
+            }
+          }
+        }
+      },
+      { $unwind: "$companiesArray" },
+      { $unwind: "$companiesArray" },
+      { $group: { _id: "$companiesArray" } },
+      { $project: { _id: 0, company: "$_id" } }
+    ]);
+
+    // Flatten the results and deduplicate
+    const distinctCompanies = [...new Set(companiesData.map(companyDoc => companyDoc.company))];
+
+    res.status(200).json({
+      success: true,
+      companies: distinctCompanies
+    });
+  } catch (error) {
+    console.error("Error occurred in getDistinctCompanies:", error);
+    res.status(500).json({ error: "Error fetching distinct companies" });
+  }
+};
+

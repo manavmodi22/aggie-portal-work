@@ -1,15 +1,16 @@
 /* Sidebar.css */
+/*
 .sidebar {
-  width: 240px; /* Adjust width as needed */
+  width: 240px; 
   height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #782424; /* Aggie Maroon color */
+  background-color: #782424;
   color: white;
   display: flex;
   flex-direction: column;
-  z-index: 1000; /* Ensure it's above other content */
+  z-index: 1000; 
 }
 
 .sidebar ul {
@@ -20,7 +21,7 @@
 }
 
 .sidebar li {
-  border: 1px solid white; /* White border around nav item */
+  border: 1px solid white; 
 }
 
 .sidebar li.selected,
@@ -31,13 +32,58 @@
 
 .sidebar a {
   text-decoration: none;
-  color: inherit; /* Use current color */
+  color: inherit; 
   padding: 15px 20px;
   display: block;
 }
 
 .sidebar-header {
   padding: 20px;
-  background-color: #5d1a1d; /* A slightly darker shade for the header */
+  background-color: #5d1a1d; 
+  font-size: 1.5em;
+}
+*/
+
+/* Adjusted for Vercel Style */
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #fafafa; /* Lighter background */
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+.sidebar li {
+  border: 1px solid #eaeaea; /* Subtle border */
+}
+
+.sidebar li.selected,
+.sidebar li:hover {
+  background-color: #eaeaea;
+  color: #111;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: inherit;
+  padding: 15px 20px;
+  display: block;
+}
+
+.sidebar-header {
+  padding: 20px;
+  background-color: #ddd; /* Lighter header */
   font-size: 1.5em;
 }

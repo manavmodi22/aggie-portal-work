@@ -1,12 +1,37 @@
 /* UserManagement.css */
+.table-container {
+  overflow: auto; /* Enable scrolling for the table container */
+  max-height: 600px; /* Adjust this to your preference */
+}
+
+.pagination-container {
+  position: sticky;
+  bottom: 0; /* Adjust this value if you want it positioned differently */
+  background-color: white; /* or any color that fits your design */
+  padding: 10px;
+  border-top: 3px solid #ccc; /* optional, for a subtle separator */
+  z-index: 1000; /* Ensures it stays on top of other elements */
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 3%;
+  margin-left: 250px; /* Adjust as needed */
+  margin-bottom: 10px;
+}
+
 .table {
-    width: calc(100% - 240px); /* Adjust width to avoid navbar and sidebar */
-    margin-left: 240px; /* Same as sidebar width to prevent overlap */
-    border-collapse: collapse;
-    border: 1px solid #ddd; /* Add border around the table */
-  }
-  
-  .table td, .table th {
+  width: calc(100% - 240px);
+  margin-left: 240px;
+  border-collapse: collapse;
+  margin-top: -1px;
+}
+
+.table thead {
+  position: sticky;
+  top: 0px; /* Use '0px' to stick to the top of the table container */
+  background-color: #782424; /* Or any other color you prefer */
+   /* Optional: Ensures the header is above other content */
+}
+.table td, .table th {
     border: 1px solid #ddd; /* Add border to cells */
     text-align: center; /* Center text horizontally */
     vertical-align: middle; /* Center text vertically */

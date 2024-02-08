@@ -9,6 +9,12 @@ const {
   getStudentResume,
   getStudentById,
   uploadStudentsFromExcel,
+  //getStudentsByFields,
+  getDistinctMajors,
+  getDistinctSkills,
+  getDistinctCohorts,
+  getDistinctStatuses,
+  getDistinctCompanies,
 } = require("../controllers/studentController");
 const { isAuthenticated } = require("../middleware/auth");
 const multer = require("multer");
@@ -39,6 +45,21 @@ router.delete("/student/delete/:id", deleteStudent);
 
 //view resume
 router.get("/students/resume/:id", getStudentResume);
+
+// // Get distinct filter options
+// router.get('/students/filters', getStudentsByFields);
+
+router.get('/students/majors/distinctmajor', getDistinctMajors);
+
+router.get('/students/majors/distinctskills', getDistinctSkills);
+
+router.get('/students/majors/distinctcohorts', getDistinctCohorts);
+
+router.get('/students/majors/distinctstatuses', getDistinctStatuses);
+
+router.get('/students/majors/distinctcompanies', getDistinctCompanies);
+
+
 
 // Upload students from Excel
 router.post(

@@ -30,7 +30,7 @@ const Register = () => {
       const apiResponse = await axios.request(config);
       console.log(apiResponse);
       // Handle success response
-      navigate("/code-verify", { state: { userEmail: email } });
+      //navigate("/code-verify", { state: { userEmail: email } });
     } catch (error) {
       // Handle registration error
       console.error("Registration failed:", error);

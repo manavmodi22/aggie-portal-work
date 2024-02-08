@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography } from "@mui/material";
 import axios from "axios"; // Import axios for making API requests
+import { Snackbar, Alert } from "@mui/material";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -8,14 +9,10 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      // const response = await axios.post('http://localhost:9000/api/signin', {
-      //     email,
-      //     password,
-      // });
-
+      const apiUrl = `http://localhost:9000/api/login`;
       const config = {
         method: "post",
-        url: `http://localhost:9000/api/signin`,
+        url: apiUrl,
         headers: {
           "Content-Type": "application/json",
         },
@@ -24,44 +21,66 @@ const Login = () => {
           password: password,
         },
       };
-
-      // const { user, token } = response.data;
+      console.log(apiResponse)
       const apiResponse = await axios.request(config);
       const responseData = apiResponse.data;
       const token = responseData.token;
       const role = responseData.user.role;
-      //console.log(apiResponse);
-      // Store the token and user role in localStorage or state management
+
       localStorage.setItem("token", token);
       localStorage.setItem("userRole", role);
-      //console.log("role", role);
 
-      // Redirect to an authorized page
       window.location.href = "/home";
-      // You can use React Router for navigation
-      // history.push('/dashboard');
     } catch (error) {
-      // Handle authentication error
       console.error("Authentication failed:", error);
+      setErrorMessage(
+        error.response && error.response.data
+          ? error.response.data.message
+          : "Login failed. Please try again."
+      );
+      setOpenSnackbar(true);
     }
+  };
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
   };
 
   return (
     <>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          height: "100vh",
+          minHeight: "100vh",
           backgroundColor: "#500001",
+          padding: "10px", // Added padding for mobile responsiveness
         }}
       >
         <Typography
           variant="h4"
           style={{
-            marginBottom: "50px",
+            marginBottom: "20px", // Adjusted for better spacing on mobile
             color: "white",
             fontFamily: "Crimson Pro",
           }}
@@ -70,18 +89,20 @@ const Login = () => {
         </Typography>
         <div
           style={{
+            maxWidth: "90%", // Ensures the container does not exceed the screen width on mobile
             width: "530px",
-            height: "203px",
+            minHeight: "203px",
             backgroundColor: "white",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            padding: "30px",
+            padding: "20px", // Adjusted padding for mobile
             borderRadius: "5px",
           }}
         >
           <TextField
-            style={{ width: "390px", height: "50px", marginBottom: "20px" }}
+            fullWidth // Ensures the input takes up the container width
+            margin="normal"
             placeholder="Email Address"
             name="email"
             label="Email Address"
@@ -90,7 +111,8 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
-            style={{ width: "390px", height: "50px", marginBottom: "20px" }}
+            fullWidth // Ensures the input takes up the container width
+            margin="normal"
             placeholder="Password"
             name="password"
             label="Password"
@@ -101,12 +123,11 @@ const Login = () => {
           />
           <Button
             variant="contained"
+            fullWidth // Ensures the button takes up the container width
             style={{
-              width: "400px",
-              height: "60px",
+              marginTop: "20px", // Added margin top for spacing
               backgroundColor: "#500001",
               color: "white",
-              borderRadius: "5px",
             }}
             onClick={handleLogin}
           >

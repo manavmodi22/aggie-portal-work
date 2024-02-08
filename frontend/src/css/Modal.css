@@ -1,29 +1,63 @@
-/* modal.css */
+/*
+
+modal.css
 .button-container {
   display: flex;
-  justify-content: flex-end; /* Adjust alignment as needed */
-  gap: 8px; /* Adjust the gap between buttons as needed */
-}
+  justify-content: flex-end; 
+  gap: 8px; 
 
 .button-container .MuiButton-root.button {
-  background-color: #782424; /* Aggie Maroon color */
+  background-color: #782424; 
   color: white;
   border: none;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
-  border-radius: 4px; /* Optional: if you want rounded buttons */
+  border-radius: 4px; 
   transition: background-color 0.3s;
 }
 
 .button-container .MuiButton-root.button:hover {
-  background-color: #5d1a1d; /* A darker shade for hover */
+  background-color: #5d1a1d; 
 }
 
 .button:last-child {
-  margin-right: 0; /* No space after the last button */
+  margin-right: 0; 
 }
 
 .button:hover {
-  background-color: #5d1a1d; /* A darker shade for hover */
+  background-color: #5d1a1d; 
+}
+*/
+
+
+/* Adjusted for Vercel Style */
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.button-container .MuiButton-root.button {
+  background-color: #111; /* Vercel's primary button color */
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.button-container .MuiButton-root.button:hover {
+  background-color: #333; /* Darker shade for hover */
+  transform: translateY(-2px); /* Slight raise effect */
+}
+
+.button:last-child {
+  margin-right: 0;
+}
+
+.button:hover {
+  background-color: #333; /* Darker shade for hover */
 }
